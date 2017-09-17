@@ -32,3 +32,7 @@ server.post('/api/messages', connector.listen());
 var bot = new builder.UniversalBot(connector, function (session) {
     session.send("You said: %s", session.message.text);
 });
+function (session,results) {
+    session.dialogData.reservationDate = builder.EntityRecognizer.resolveTime([results.response]);
+    builder.Prompts.number(session, "List all your restaurant preferences");
+}
