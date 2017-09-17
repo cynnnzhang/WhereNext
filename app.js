@@ -49,9 +49,44 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     
     console.log(args);
     
-    //put yelp code here 
-    session.send("You asked for restaurants");
+    //put yelp code here
+
+var Yelp = require('yelp-api-v3');
+ 
+var yelp = new Yelp({
+  app_id: 'cjtN2Z8yhToA5s6fgkRQUA',
+  app_secret: 'c6UBpZaKvaPLpvT6ig5FE44TqM0hFsuNPmm9JHmnPXVlH1KoQPIEBup9vAYono2t'
+});
+
+var searchResults;
+var name;
+var rating;
+var price;
+var address;
+var distance;
+var output = [];
+
+// https://github.com/Yelp/yelp-api-v3/blob/master/docs/api-references/businesses-search.md 
+yelp.search({latitude: '43.4729790', longitude: '-80.5401030', limit: 5})
+.then(function (data) {
+    searchResults = JSON.parse(data);
+    session.send("Here are my recommendations:\n\n");
+    for (var i = 0; i < 5; i++) {
+        name = "Name: " + searchResults.businesses[i].name;
+        rating = "Rating: " + searchResults.businesses[i].rating + "/5";
+        price = "Price Range ($-$$$): " + searchResults.businesses[i].price;
+        address = "Address " + searchResults.businesses[i].location.address1;
+        distance = "Distance: " + Math.round(searchResults.businesses[i].distance/100) / 10 + " km";
+        session.send(name + "\n\n" + rating + "\n\n" + price + "\n\n" + "\n\n" + address + "\n\n" + distance + "\n\n\n\n");
+    }
+    
 })
+.catch(function (err) {
+    console.error(err);
+});
+})
+
+
 .onDefault((session, args) => {
     console.log(args);
     
