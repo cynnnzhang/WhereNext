@@ -29,10 +29,12 @@ server.post('/api/messages', connector.listen());
 * ---------------------------------------------------------------------------------------- */
 
 // Create your bot with a function to receive messages from the user
-var bot = new builder.UniversalBot(connector, function (session) {
-    session.send("You said: %s", session.message.text);
-});
+var bot = new builder.UniversalBot(connector, [
+    function (session) {
+        session.send("Welcome to WhereNext!");
+        builder.Prompts.time(session, "Please list off your restaurant preferences.");
+    },
 function (session,results) {
-    session.dialogData.reservationDate = builder.EntityRecognizer.resolveTime([results.response]);
+    session.dialogData.listpref = builder.EntityRecognizer.resolveTime([results.response]);
     builder.Prompts.number(session, "List all your restaurant preferences");
 }
